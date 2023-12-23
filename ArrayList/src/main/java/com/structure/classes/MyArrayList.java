@@ -4,16 +4,32 @@ import com.structure.interfaces.MyList;
 import org.jetbrains.annotations.NotNull;
 
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 
 public class MyArrayList<T> implements MyList<T> {
+    /**
+     * Value which used to initialize list by default constructor
+     */
     private static final int INITIAL_CAPACITY = 10;
+    /**
+     * Array which used to store data
+     */
     private Object[] array;
+    /**
+     * Count of elements in list
+     */
     private int size;
+    /**
+     * Capacity of array
+     */
     private int currentCapacity;
 
     /**
@@ -37,22 +53,41 @@ public class MyArrayList<T> implements MyList<T> {
         currentCapacity = capacity;
     }
 
+    /**
+     *Count list elements
+     *@return size of list
+     */
     public int size() {
         return this.size;
     }
 
+    /**
+     * @return <b>true</b> if list is empty, <br>
+     *  <b>false</b> if list is not empty
+     */
     public boolean isEmpty() {
         return this.size == 0;
     }
 
+    /**
+     * @return <b>true</b> if list is contain, <br>
+     *         <b>false</b> if list is not contain elem
+     */
     public boolean contains(T elem) {
         return indexOf(elem) >= 0;
     }
 
+    /**
+     * @return <b>true</b> if list is contain all elements of given collection, <br>
+     *         <b>false</b> if list is not contain elem at least one element of given collection
+     */
     public boolean containsAll(@NotNull Collection<T> collection) {
         return collection.stream().allMatch(this::contains);
     }
 
+    /**
+     * Execute action for each element in list
+     */
     public void forEach(@NotNull Consumer<T> action) {
         for (int i = 0; i < size; i++) {
             @SuppressWarnings("unchecked") T elem = (T) array[i];
@@ -60,6 +95,9 @@ public class MyArrayList<T> implements MyList<T> {
         }
     }
 
+    /**
+     * @return arrays representing of list elements
+     */
     public T[] toArray() {
         Object[] arrayCopy = new Object[size];
         System.arraycopy(array, 0, arrayCopy, 0, size);
@@ -67,10 +105,16 @@ public class MyArrayList<T> implements MyList<T> {
         return arrayClone;
     }
 
+    /**
+     * Add not-null element to list
+     */
     public void add(@NotNull T elem) {
         addLast(elem);
     }
 
+    /**
+     * Add not-null element to list in position <b>index</b>
+     */
     public void add(int index, @NotNull T elem) {
         checkValidIndex(index);
         if (currentCapacity == size) {
@@ -85,6 +129,9 @@ public class MyArrayList<T> implements MyList<T> {
         }
     }
 
+    /**
+     * Add not-null element to beginning list
+     */
     public void addFirst(@NotNull T elem) {
         if (size == currentCapacity) {
             expandArray();
@@ -94,6 +141,9 @@ public class MyArrayList<T> implements MyList<T> {
         size++;
     }
 
+    /**
+     * Add not-null element to end of list
+     */
     public void addLast(@NotNull T elem) {
         if (size == currentCapacity) {
             expandArray();
@@ -102,10 +152,16 @@ public class MyArrayList<T> implements MyList<T> {
         size++;
     }
 
+    /**
+     * Add all elements from given collection to end of list
+     */
     public void addAll(@NotNull Collection<T> collection) {
         collection.forEach(this::addLast);
     }
 
+    /**
+     * Add all elements from given collection to position <b>index</b>
+     */
     public void addAll(int index, @NotNull Collection<T> collection) {
         checkValidIndex(index);
         Object[] objects = collection.toArray();
@@ -116,6 +172,11 @@ public class MyArrayList<T> implements MyList<T> {
         }
     }
 
+    /**
+     * Remove first element by equals from list
+     * @return <b>true</b> if elem was removed, <br>
+     *         <b>false</b> if elem wasn't removed
+     */
     public boolean remove(@NotNull T elem) {
         if (!isEmpty()) {
             int index = indexOf(elem);
@@ -130,6 +191,10 @@ public class MyArrayList<T> implements MyList<T> {
         return false;
     }
 
+    /**
+     * Remove first element by <b>index</b> from list
+     * @return element was removed
+     */
     public T remove(int index) {
         checkValidIndex(index);
         if (!isEmpty()) {
@@ -142,6 +207,10 @@ public class MyArrayList<T> implements MyList<T> {
         throw new NoSuchElementException("List is empty!");
     }
 
+    /**
+     * Remove first element by equals from list
+     * @return element was removed
+     */
     public T removeFirst() {
         if (!isEmpty()) {
             @SuppressWarnings("unchecked") T elemRemoved = (T) array[0];
@@ -153,7 +222,10 @@ public class MyArrayList<T> implements MyList<T> {
         throw new NoSuchElementException("List is empty!");
     }
 
-
+    /**
+     * Remove last element by equals from list
+     * @return element was removed
+     */
     public T removeLast() {
         if (!isEmpty()) {
             @SuppressWarnings("unchecked") T elemRemoved = (T) array[size - 1];
@@ -164,7 +236,11 @@ public class MyArrayList<T> implements MyList<T> {
         throw new NoSuchElementException("List is empty!");
     }
 
-
+    /**
+     * Remove every element which satisfy to predicate
+     * @return <b>true</b> if all element was removed,<br> either
+     *         <b>false</b>
+     */
     public boolean removeIf(@NotNull Predicate<T> filter) {
         if (!isEmpty()) {
             for (int i = 0; i < size; i++) {
@@ -180,16 +256,27 @@ public class MyArrayList<T> implements MyList<T> {
         return false;
     }
 
+    /**
+     * Remove every element from collection
+     * @return <b>true</b> if all element was removed,<br> either
+     *         <b>false</b>
+     */
     public boolean removeAll(@NotNull Collection<T> collection) {
         return collection.stream().allMatch(this::remove);
     }
 
+    /**
+     * @return element from list by index
+     */
     public T get(int index) {
         checkValidIndex(index);
         @SuppressWarnings("unchecked") T elem = (T) array[index];
         return elem;
     }
 
+    /**
+     * @return first element from list
+     */
     public T getFirst() {
         if (!isEmpty()) {
             @SuppressWarnings("unchecked") T elem = (T) array[0];
@@ -198,6 +285,9 @@ public class MyArrayList<T> implements MyList<T> {
         throw new NoSuchElementException("List is empty!");
     }
 
+    /**
+     * @return last element from list
+     */
     public T getLast() {
         if (!isEmpty()) {
             @SuppressWarnings("unchecked") T elem = (T) array[size - 1];
@@ -206,11 +296,17 @@ public class MyArrayList<T> implements MyList<T> {
         throw new NoSuchElementException("List is empty!");
     }
 
+    /**
+     * Set <b>element</b> to <b>index</b> in list
+     */
     public void set(int index, @NotNull T element) {
         checkValidIndex(index);
         array[index] = element;
     }
 
+    /**
+     * @return first index of elem in list
+     */
     public int indexOf(@NotNull T elem) {
         for (int i = 0; i < size; i++) {
             if (array[i].equals(elem)) {
@@ -220,6 +316,9 @@ public class MyArrayList<T> implements MyList<T> {
         return -1;
     }
 
+    /**
+     * @return last index of elem in list
+     */
     public int lastIndexOf(@NotNull T elem) {
         for (int i = size - 1; i >= 0; i--) {
             if (array[i].equals(elem)) {
@@ -229,6 +328,9 @@ public class MyArrayList<T> implements MyList<T> {
         return -1;
     }
 
+    /**
+     * @return new list from <b>fromIndex</b> to <b>toIndex</b>
+     */
     public MyList<T> subList(int fromIndex, int toIndex) {
         checkValidIndex(fromIndex);
         checkValidIndex(toIndex - 1);
@@ -240,6 +342,9 @@ public class MyArrayList<T> implements MyList<T> {
         return mySubList;
     }
 
+    /**
+     * @return stream from array which contains <b>size</b> elements
+     */
     @SuppressWarnings("unchecked")
     public Stream<T> stream() {
         Object[] newArray = new Object[size];
@@ -247,6 +352,9 @@ public class MyArrayList<T> implements MyList<T> {
         return (Stream<T>) Stream.of(newArray);
     }
 
+    /**
+     * @return new list with reversed order of elements
+     */
     @SuppressWarnings("unchecked")
     public MyList<T> reversed() {
         MyArrayList<T> newArrayList = new MyArrayList<>(size);
@@ -257,6 +365,9 @@ public class MyArrayList<T> implements MyList<T> {
         return newArrayList;
     }
 
+    /**
+     * Sort array for given <b>comparator</b>
+     */
     @SuppressWarnings("unchecked")
     public void sort(@NotNull Comparator<T> comparator) {
         Object[] newArray = new Object[size];
@@ -265,6 +376,9 @@ public class MyArrayList<T> implements MyList<T> {
         System.arraycopy(newArray, 0, array, 0, size);
     }
 
+    /**
+     * Clear all elements in list (set null)
+     */
     public void clear() {
         for (int i = 0; i < size; i++) {
             array[i] = null;

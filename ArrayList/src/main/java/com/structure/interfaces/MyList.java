@@ -25,14 +25,12 @@ public interface MyList<T> {
     boolean isEmpty();
 
     /**
-     *
      * @return <b>true</b> if list is contain, <br>
      *         <b>false</b> if list is not contain elem
      */
     boolean contains(T elem);
 
     /**
-     *
      * @return <b>true</b> if list is contain all elements of given collection, <br>
      *         <b>false</b> if list is not contain elem at least one element of given collection
      */
@@ -88,7 +86,6 @@ public interface MyList<T> {
     /**
      * Remove first element by <b>index</b> from list
      * @return element was removed
-     *
      */
     T remove(int index);
 
@@ -119,7 +116,6 @@ public interface MyList<T> {
     boolean removeAll(@NotNull Collection<T> collection);
 
     /**
-     *
      * @return element from list by index
      */
     T get(int index);
@@ -135,25 +131,21 @@ public interface MyList<T> {
     T getLast();
 
     /**
-     *
      * Set <b>element</b> to <b>index</b> in list
      */
     void set(int index, @NotNull T element);
 
     /**
-     *
      * @return first index of elem in list
      */
     int indexOf(@NotNull T elem);
 
     /**
-     *
      * @return last index of elem in list
      */
     int lastIndexOf(@NotNull T elem);
 
     /**
-     *
      * @return new list from <b>fromIndex</b> to <b>toIndex</b>
      */
     MyList<T> subList(int fromIndex, int toIndex);
